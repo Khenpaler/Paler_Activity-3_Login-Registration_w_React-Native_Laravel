@@ -23,10 +23,11 @@ export default function Landing({navigation}) {
         </Button>
 
       <Button
-      style={styles.buttonStyle}
+      style={[styles.buttonStyle, styles.signupBotton]}
       icon='account-plus'
       mode='contained'
       buttonColor='blue'
+      textColor='#233DFD'
       onPress={() => navigation.navigate('Signup')}
         >SIGNUP
         </Button>
@@ -59,5 +60,10 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         marginTop: 10,
+    },
+    signupBotton: {
+      backgroundColor: 'white',
+      borderColor: '#233DFD',
+      borderWidth: 2,
     },
 });
