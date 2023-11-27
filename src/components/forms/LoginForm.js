@@ -22,14 +22,12 @@ const [rememberMe, setRememberMe] = useState(false);
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Email'
-            label='Email'
             />
 
             <TextInput
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Password'
-            label='Password'
             secureTextEntry={showPass}
             right={
                 <TextInput.Icon icon={!showPass ? 'eye' : 'eye-off'} onPress={() => setShowPass(!showPass)}/>

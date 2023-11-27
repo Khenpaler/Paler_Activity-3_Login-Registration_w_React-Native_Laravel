@@ -19,21 +19,18 @@ const [showRePass, setShowRePass] = React.useState(true);
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Username'
-            label='Username'
             />
 
             <TextInput
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Your Email'
-            label='Your Email'
             />
 
             <TextInput
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Password'
-            label='Password'
             secureTextEntry={showPass}
             right={
                 <TextInput.Icon icon={!showPass ? 'eye' : 'eye-off'} onPress={() => setShowPass(!showPass)}/>
@@ -44,7 +41,6 @@ const [showRePass, setShowRePass] = React.useState(true);
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Repeat your Password'
-            label='Repeat your Password'
             secureTextEntry={showRePass}
             right={
                 <TextInput.Icon icon={!showRePass ? 'eye' : 'eye-off'} onPress={() => setShowRePass(!showRePass)}/>
