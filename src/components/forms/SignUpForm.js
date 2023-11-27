@@ -78,15 +78,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     signUpWrapper: {
-        marginLeft: 10,
-        marginRight: 10,
+        width: '80%',
+        alignSelf:'center',
     },
     textInputStyle: {
         marginTop: 10,
     },
     buttonStyle: {
-        marginLeft: 10,
-        marginRight: 10,
+        width: '80%',
+        alignSelf:'center',
         marginTop: 20,
         backgroundColor: '#233DFD',
     },

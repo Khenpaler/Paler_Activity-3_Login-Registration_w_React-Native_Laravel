@@ -63,9 +63,10 @@ const [rememberMe, setRememberMe] = useState(false);
 
             <Button
             onPress={() => navigation.navigate("Signup")}
-            style={styles.buttonStyle}
+            style={[styles.buttonStyle, styles.signupBotton]}
             icon='account-plus' 
             mode='contained'
+            textColor='#233DFD'
                 >Signup
                 </Button>
 
@@ -105,6 +106,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     textInputStyle: {
+        width: '90%',
+        alignSelf:'center',
         marginTop: 10,
     },
     rememberForgotContainer: {
@@ -112,8 +115,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 10,
-        marginRight: 10,
-        marginLeft: 5,
+        width: '85%',
+        alignSelf:'center',
     },
     checkboxContainer: {
         flexDirection: 'row',
@@ -131,9 +134,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     buttonStyle: {
-        marginLeft: 10,
-        marginRight: 10,
+        width: '80%',
+        alignSelf:'center',
         marginTop: 20,
         backgroundColor: '#233DFD',
+    },
+    signupBotton: {
+        backgroundColor: 'white',
+        borderColor: '#233DFD',
+        borderWidth: 2,
     },
 });
