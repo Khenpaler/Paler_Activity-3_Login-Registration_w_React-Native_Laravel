@@ -1,130 +1,175 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, Keyboard, ScrollView, KeyboardAvoidingView } from 'react-native'
 import React, {useState} from 'react'
-import { TextInput, Button, Checkbox } from 'react-native-paper';
-import LogoImage from '../styles/LogoImage';
+import { TextInput, Button, IconButton } from 'react-native-paper';
+import fetchServices from "../services/fetchServices";
+import { KeyboardAwareView } from 'react-native-keyboard-aware-view';
 
 
 export default function LoginForm({navigation}) {
 
-const [showPass, setShowPass] = React.useState(true);
-const [rememberMe, setRememberMe] = useState(false);
+    const LogoImage = require('../../../assets/PokusLogo.png');
 
-  return (
-    <View style={styles.container}>
+    const [showPass, setShowPass] = React.useState(true);
 
-        <View style={styles.imageContainer}>
-            <Image source={LogoImage} style={styles.imageStyle}></Image>
-        </View>
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-        <View style={styles.loginWrapper}>
 
-            <TextInput
-            style={styles.textInputStyle}
-            mode='outlined'
-            placeholder='Email'
-            />
+    const [loading, setLoading] = React.useState(false);
 
-            <TextInput
-            style={styles.textInputStyle}
-            mode='outlined'
-            placeholder='Password'
-            secureTextEntry={showPass}
-            right={
-                <TextInput.Icon icon={!showPass ? 'eye' : 'eye-off'} onPress={() => setShowPass(!showPass)}/>
-            }
-            />
 
-            <View style={styles.rememberForgotContainer}>
+    const showToast = (message = "Something wen't wrong") => {
+        ToastAndroid.show(message, 3000);
+      };
 
-                <View style={styles.checkboxContainer}>
-                    <Checkbox
-                        status={rememberMe ? 'checked' : 'unchecked'}
-                        onPress={() => setRememberMe(!rememberMe)}
-                        color="#233DFD"
-                    />
-                    <Text style={styles.checkboxText}>Remember Me</Text>
-                </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                    <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-                </TouchableOpacity>
+
+    const handleLogin = async () => {
+
+    try {
+        setLoading(true);
+        if (email === "") {
+        setErrors({ email: true });
+        return false;
+        }
+
+        if (password === "") {
+        setErrors({ password: true });
+        return false;
+        }
+
+        const url = "http://192.168.146.137:8000/api/v1/login";
+        const data = {
+                email,
+                password,
+        };
+
+        const result = await fetchServices.postData(url, data);  
+        console.debug(result);     
+
+        if (result.message != null) {
+            showToast(result?.message);
+        } else {
+            showToast("Successfully Logged In");
+
+            // Dismiss the keyboard
+            Keyboard.dismiss();
+
+            // Introduce a delay of 2 seconds (adjust the time as needed)
+            setTimeout(() => {
+                navigation.navigate("Home");
+            }, 2000);
+
+            setEmail("");
+            setPassword("");
+        }
+        } catch (e) {
+            console.debug(e.toString());
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+
+            <View style={{flex: 1, justifyContent:'flex-start', alignItems:'flex-start'}}>
+                <IconButton
+                    icon='keyboard-backspace'
+                    iconColor='white'
+                    size={30}
+                    marginLeft={15}
+                    marginTop={10}
+                    onPress={() => navigation.navigate('Landing')}
+                />  
             </View>
             
+            
+            <View style={styles.loginWrapper}>
 
-            <Button
-            onPress={() => navigation.navigate("Home")}
-            style={styles.buttonStyle}
-            icon='login' 
-            mode='contained'
-                >Login
-                </Button>
+                <View style={styles.imageContainer}>
+                    <Image source={LogoImage} style={styles.imageStyle}></Image>
+                </View>
 
-            <Button
-            onPress={() => navigation.navigate("Signup")}
-            style={[styles.buttonStyle, styles.signupBotton]}
-            icon='account-plus' 
-            mode='contained'
-            textColor='#233DFD'
-                >Signup
-                </Button>
+                <TextInput
+                style={styles.textInputStyle}
+                mode='outlined'
+                placeholder='Email'
+                value={email}
+                onChangeText={setEmail}
+                />
 
-            <Button 
-            onPress={() => navigation.navigate('Landing')}
-            style={styles.buttonStyle}
-            icon='arrow-left' 
-            mode='contained'
-                >Go Back
-                </Button>
+                <TextInput
+                style={styles.textInputStyle}
+                mode='outlined'
+                placeholder='Password'
+                secureTextEntry={showPass}
+                right={
+                    <TextInput.Icon icon={!showPass ? 'eye' : 'eye-off'} onPress={() => setShowPass(!showPass)}/>
+                }
+                value={password}
+                onChangeText={setPassword}
+                />
+
+                <View style={styles.rememberForgotContainer}>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                    </TouchableOpacity>
+                </View>
+                
+
+                <Button
+                onPress={handleLogin}
+                loading={loading}
+                disabled={loading}
+                style={styles.buttonStyle}
+                icon='login' 
+                mode='contained'
+                    >Login
+                    </Button>
+
+                <View style={styles.loginContainer}>
+                    <Text style={styles.textStyle}>Don't Have an Account?</Text>
+
+                    <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                    <Text style={[styles.textStyle, styles.loginTextStyle]}>Signup Here</Text>
+                    </TouchableOpacity>
+                </View>
+
+            </View>
 
         </View>
-
-    </View>
-  )
+    )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
     },
     imageContainer: {
-        flex: 2,
+        alignItems: 'stretch',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 200,
     },
     imageStyle: {
-        height: 500,
+        height: 200,
         width: 500,
-        resizeMode: 'contain',
     },
     loginWrapper: {
         flex: 3,
-        marginLeft: 10,
-        marginRight: 10,
     },
     textInputStyle: {
         width: '90%',
         alignSelf:'center',
-        marginTop: 10,
+        marginVertical: 10,
     },
     rememberForgotContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: 'row-reverse',
         marginTop: 10,
         width: '85%',
         alignSelf:'center',
     },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-      },
-    checkboxText: {
-        marginLeft: 8,
-        fontSize: 15,
-        color: 'white',
-      },
     forgotPasswordText: {
         color: 'white',
         textAlign: 'center',
@@ -137,9 +182,20 @@ const styles = StyleSheet.create({
         marginTop: 20,
         backgroundColor: '#233DFD',
     },
-    signupBotton: {
-        backgroundColor: 'white',
-        borderColor: '#233DFD',
-        borderWidth: 2,
+    loginContainer: {
+        alignSelf: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        width: 300,
+        marginTop: 30,
+    },
+    textStyle: {
+        fontSize: 15,
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    loginTextStyle:{
+        textDecorationLine: 'underline',
+        color: '#233DFD',
     },
 });

@@ -1,17 +1,26 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, IconButton } from 'react-native-paper';
 
 export default function ForgotPasswordForm({navigation}) {
-
-const [showPass, setShowPass] = React.useState(true);
-
-const [showRePass, setShowRePass] = React.useState(true);
 
   return (
     <View style={styles.container}>
 
-        <View style={styles.signUpWrapper}>
+        <View style={{flex: 0}}>
+            <IconButton
+                icon='keyboard-backspace'
+                iconColor='white'
+                size={30}
+                marginLeft={15}
+                marginTop={10}
+                onPress={() => navigation.navigate('Login')}
+            />
+        </View>
+
+        <View style={{flex: 0.5}}></View>
+
+        <View style={styles.accountRecoveryWrapper}>
 
             <Text style={{textAlign:'center', 
                 fontWeight:'bold', 
@@ -27,21 +36,12 @@ const [showRePass, setShowRePass] = React.useState(true);
             style={styles.textInputStyle}
             mode='outlined'
             placeholder='Your Email'
-            label='Your Email'
             />
 
             <Button 
             style={styles.buttonStyle} 
             mode='contained'
                 >GET PASSWORD
-                </Button>
-
-            <Button 
-            onPress={() => navigation.navigate('Login')}
-            style={styles.buttonStyle}
-            icon='arrow-left' 
-            mode='contained'
-                >Go Back
                 </Button>
 
         </View>
@@ -55,9 +55,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
-    signUpWrapper: {
-        marginLeft: 10,
-        marginRight: 10,
+    accountRecoveryWrapper: {
+        flex: 1,
+        alignSelf: 'center',
+        width: '90%',
     },
     textInputStyle: {
         marginTop: 10,

@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import KhenImage from '../styles/KhenImage';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import {Button} from 'react-native-paper';
 
 
 export default function HomeScreen({navigation}) {
+
+const KhenImage = require('../../../assets/KhenImage.png');
 
   return (
     <View style={styles.container}>
@@ -15,7 +16,7 @@ export default function HomeScreen({navigation}) {
                 marginBottom: 10,}}>Activity 2: Styling and Navigation in React Native</Text>
             <Image source={KhenImage} style={styles.imageStyle}></Image>
             <Text style={{color: 'white',
-                marginTop: 10,}}>Name: Khen Harold P. paler {'\n'}Section: IT3R8 </Text>
+                marginTop: 10,}}>Name: Khen Harold P. Paler {'\n'}Section: IT3R8 </Text>
         </View>
 
         <View style={{flex: 1}}>
