@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, Keyboard, ScrollView, KeyboardAvoidingView } from 'react-native'
-import React, {useState} from 'react'
-import { TextInput, Button, IconButton } from 'react-native-paper';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ToastAndroid, Keyboard} from 'react-native'
+import React from 'react'
+import { TextInput, Button, IconButton, HelperText } from 'react-native-paper';
 import fetchServices from "../services/fetchServices";
-import { KeyboardAwareView } from 'react-native-keyboard-aware-view';
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 
 export default function LoginForm({navigation}) {
@@ -11,41 +12,19 @@ export default function LoginForm({navigation}) {
 
     const [showPass, setShowPass] = React.useState(true);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-
-    const [loading, setLoading] = React.useState(false);
-
-
     const showToast = (message = "Something wen't wrong") => {
         ToastAndroid.show(message, 3000);
       };
 
 
 
-    const handleLogin = async () => {
+    const handleLogin = async (values, { resetForm }) => {
 
     try {
-        setLoading(true);
-        if (email === "") {
-        setErrors({ email: true });
-        return false;
-        }
-
-        if (password === "") {
-        setErrors({ password: true });
-        return false;
-        }
-
+        // console.debug(values);
         const url = "http://192.168.146.137:8000/api/v1/login";
-        const data = {
-                email,
-                password,
-        };
 
-        const result = await fetchServices.postData(url, data);  
-        console.debug(result);     
+        const result = await fetchServices.postData(url, values);   
 
         if (result.message != null) {
             showToast(result?.message);
@@ -58,89 +37,161 @@ export default function LoginForm({navigation}) {
             // Introduce a delay of 2 seconds (adjust the time as needed)
             setTimeout(() => {
                 navigation.navigate("Home");
-            }, 2000);
+            }, 1000);
 
-            setEmail("");
-            setPassword("");
+            // Reset the form
+            resetForm({ values: { email: "", password: "" } });
+            navigation.navigate("Home");
         }
         } catch (e) {
             console.debug(e.toString());
-        } finally {
-            setLoading(false);
         }
     };
 
+
+    const validationSchema = Yup.object().shape({
+        email: Yup.string()
+            .email("Invalid Email")
+            .required("Please enter your email"),
+
+        password: Yup.string()
+            .required("Please enter your password"),
+      });
+
+
+    // const initialValues = {
+    //     firstname: "",
+    //     lastname:"",
+    //     email:"",
+    //     password:"",
+    //     repassword:"",
+    // }
+
     return (
-        <View style={styles.container}>
+        <Formik 
+            initialValues={{email: "", password: ""}}
+            onSubmit={async (values, { resetForm }) => {
+                await handleLogin(values, { resetForm });
+            }}
+            validationSchema={validationSchema}
+        >
+            {({ 
+                values, 
+                handleChange, 
+                handleBlur,
+                setFieldError,
+                setFieldTouched,
+                handleSubmit, 
+                isSubmitting, 
+                errors,
+                touched,
+                setTouched,
+             }) => {
+                // console.debug(errors);
+                return (
+                    <View style={styles.container}>
 
-            <View style={{flex: 1, justifyContent:'flex-start', alignItems:'flex-start'}}>
-                <IconButton
-                    icon='keyboard-backspace'
-                    iconColor='white'
-                    size={30}
-                    marginLeft={15}
-                    marginTop={10}
-                    onPress={() => navigation.navigate('Landing')}
-                />  
-            </View>
+                        <View style={{flex: 1, justifyContent:'flex-start', alignItems:'flex-start'}}>
+                            <IconButton
+                                icon='keyboard-backspace'
+                                iconColor='white'
+                                size={30}
+                                marginLeft={15}
+                                marginTop={10}
+                                onPress={() => navigation.navigate('Landing')}
+                            />  
+                        </View>
+                        
+                        
+                        <View style={styles.loginWrapper}>
             
+                            <View style={styles.imageContainer}>
+                                <Image source={LogoImage} style={styles.imageStyle}></Image>
+                            </View>
             
-            <View style={styles.loginWrapper}>
+                            <TextInput
+                            style={styles.textInputStyle}
+                            left={<TextInput.Icon icon="email"/>}
+                            mode='outlined'
+                            placeholder='Email'
+                            defaultValue={values.email}
+                            value={values.email}
+                            keyboardType='email-address'
+                            onChangeText={handleChange('email')}
+                            onBlur={() => {
+                                handleBlur('email');
+                                setFieldError('email', '');  // Reset error for the field
+                                setFieldTouched('email', false);  // Reset touched state for the field
+                              }}
+                            error={errors.email && touched.email}
+                            onFocus={() => setTouched({ email: true }, false)}
+                            />
+                            {errors.email && touched.email && (
+                                <HelperText style={{marginLeft:25}} type="error" visible={errors.email}>
+                                    {errors.email}
+                                </HelperText>
+                            )}
+                            
 
-                <View style={styles.imageContainer}>
-                    <Image source={LogoImage} style={styles.imageStyle}></Image>
-                </View>
-
-                <TextInput
-                style={styles.textInputStyle}
-                mode='outlined'
-                placeholder='Email'
-                value={email}
-                onChangeText={setEmail}
-                />
-
-                <TextInput
-                style={styles.textInputStyle}
-                mode='outlined'
-                placeholder='Password'
-                secureTextEntry={showPass}
-                right={
-                    <TextInput.Icon icon={!showPass ? 'eye' : 'eye-off'} onPress={() => setShowPass(!showPass)}/>
-                }
-                value={password}
-                onChangeText={setPassword}
-                />
-
-                <View style={styles.rememberForgotContainer}>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-                    </TouchableOpacity>
-                </View>
-                
-
-                <Button
-                onPress={handleLogin}
-                loading={loading}
-                disabled={loading}
-                style={styles.buttonStyle}
-                icon='login' 
-                mode='contained'
-                    >Login
-                    </Button>
-
-                <View style={styles.loginContainer}>
-                    <Text style={styles.textStyle}>Don't Have an Account?</Text>
-
-                    <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-                    <Text style={[styles.textStyle, styles.loginTextStyle]}>Signup Here</Text>
-                    </TouchableOpacity>
-                </View>
-
-            </View>
-
-        </View>
-    )
+                            <TextInput
+                            style={[styles.textInputStyle, {marginTop: 20}]}
+                            left={<TextInput.Icon icon="lock"/>}
+                            mode='outlined'
+                            placeholder='Password'
+                            secureTextEntry={showPass}
+                            right={
+                                <TextInput.Icon icon={!showPass ? 'eye' : 'eye-off'} onPress={() => setShowPass(!showPass)}/>
+                            }
+                            value={values.password}
+                            onChangeText={handleChange('password')}
+                            onBlur={() => {
+                                handleBlur('password');
+                                setFieldError('password', '');  // Reset error for the field
+                                setFieldTouched('password', false);  // Reset touched state for the field
+                              }}
+                            error={errors.password && touched.password}
+                            onFocus={() => setTouched({ password: true }, false)}
+                            />
+                            {errors.password && touched.password && (
+                                <HelperText style={{marginLeft:25}} type="error" visible={errors.password}>
+                                    {errors.password}
+                                </HelperText>
+                            )}
+            
+                            <View style={styles.rememberForgotContainer}>
+            
+                                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                                    <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                                </TouchableOpacity>
+                            </View>
+                            
+            
+                            <Button
+                            loading={isSubmitting}
+                            disabled={isSubmitting}
+                            onPress={handleSubmit}
+                            style={styles.buttonStyle}
+                            icon='login' 
+                            mode='contained'
+                                >Login
+                                </Button>
+            
+                            <View style={styles.loginContainer}>
+                                <Text style={styles.textStyle}>Don't Have an Account?</Text>
+            
+                                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                                <Text style={[styles.textStyle, styles.loginTextStyle]}>Signup Here</Text>
+                                </TouchableOpacity>
+                            </View>
+            
+                        </View>
+    
+                    </View>
+                );
+            }}
+        </Formik>
+        
+    );
 }
 
 const styles = StyleSheet.create({
@@ -162,7 +213,6 @@ const styles = StyleSheet.create({
     textInputStyle: {
         width: '90%',
         alignSelf:'center',
-        marginVertical: 10,
     },
     rememberForgotContainer: {
         flexDirection: 'row-reverse',

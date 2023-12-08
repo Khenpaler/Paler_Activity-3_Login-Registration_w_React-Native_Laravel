@@ -13,7 +13,7 @@ const KhenImage = require('../../../assets/KhenImage.png');
 
         <View style={styles.imageContainer}>
         <Text style={{color: 'white',
-                marginBottom: 10,}}>Activity 2: Styling and Navigation in React Native</Text>
+                marginBottom: 10,textAlign:'center'}}>Activity 3: Login and Registration{'\n'} with React Native & Laravel{'\n'} and Validation using Formik and Yup</Text>
             <Image source={KhenImage} style={styles.imageStyle}></Image>
             <Text style={{color: 'white',
                 marginTop: 10,}}>Name: Khen Harold P. Paler {'\n'}Section: IT3R8 </Text>
