@@ -14,4 +14,4 @@
 
 ### App Demo:
 
-🚀 [Demo Link](<googledrivelink>)
+📱 [Demo Link](<googledrivelink>)
