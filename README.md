@@ -14,4 +14,4 @@
 
 ### App Demo:
 
-📱 [Demo Link](https://drive.google.com/file/d/11CgbSGgDBKHcweXRqtvlPwpzIiDxEOlI/view?usp=sharing)
+📱 [CLICK THIS LINK FOR THE DEMO](https://drive.google.com/file/d/11CgbSGgDBKHcweXRqtvlPwpzIiDxEOlI/view?usp=sharing)
